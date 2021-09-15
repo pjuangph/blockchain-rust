@@ -1,3 +1,5 @@
+// This is similar to a c# interface
+
 pub trait Hashable {
     fn bytes (&self) -> Vec<u8>;
 

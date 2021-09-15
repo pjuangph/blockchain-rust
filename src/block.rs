@@ -1,5 +1,5 @@
 use std::fmt::{ self, Debug, Formatter };
-use super::*;
+use super::{BlockHash,u128_bytes, u32_bytes, u64_bytes, Hashable};
 
 pub struct Block {
     pub index: u32,
