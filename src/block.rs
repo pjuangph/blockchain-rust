@@ -45,11 +45,11 @@ impl Block {
     }
 
     pub fn mine(&mut self){
-        //! Loop through every single u64 bit value until we find one 
+        //! Loop through every single u64 bit value until we find one that where the 16 significant bytes fit the difficulty
         for nonce_attempt in 0..(u64::max_value()){
             self.nonce = nonce_attempt;
             let hash = self.hash();
-            // Check the hash to see if it matches the difficulty of the block struct
+            // takes the last 16 bytes and do a simple greater than comparison 
             if check_difficulty(&hash, self.difficulty){
                 self.hash = hash;
                 return;
@@ -59,6 +59,7 @@ impl Block {
 }
 
 impl Hashable for Block {
+    /// This function takes converts the contents of the block to bytes. The bytes will be converted to a hash and then mined. 
     fn bytes (&self) -> Vec<u8> {
         let mut bytes = vec![];
 

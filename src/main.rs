@@ -8,10 +8,12 @@ use blockchainlib::{Block,Hashable};
 // Example 42u32
 // Big Endian 00 00 00 2a
 // Little Endian 2a 00 00 00
+
+
 fn main () {
     // difficulty = 0x00 first 16 bytes are 15
     let difficulty = 0x0000ffffffffffffffffffffffffffff;
-    let mut block = Block::new(0, 0, vec![0; 32], 0, "Genesis block!".to_owned(), difficulty);
+    let mut block = Block::new(0, 0, vec![0; 32], 118318, "Genesis block!".to_owned(), difficulty);
 
     block.hash = block.hash();
 

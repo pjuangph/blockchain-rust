@@ -59,9 +59,11 @@ pub fn u128_bytes (u: &u128) -> [u8; 16] {
     ]
 }
 
-/// Takes a vector of bytes and takes the last byte in the vector and shifts it over by 15*8 then adds them all `|` bitwise or = addition. 
+/// Difficulty: SHA256 -> 32 byte hash. We take the 16 most significant bytes and interpret as a number and compare it to difficulty. if difficulty is > 16 bytes of the hash then we consider it as valid hash. 
+
+/// Takes a vector of bytes and takes the last 16 bytes in the vector and shifts it over by 15*8 then adds them all `|` bitwise or = addition. 
 pub fn difficulty_bytes_as_u128 (v: &Vec<u8>) -> u128 {
-    ((v[31] as u128) << 0xf * 8) |
+    ((v[31] as u128) << 0xf * 8) |  // << shifts over by 8 and "|" adds to next 
     ((v[30] as u128) << 0xe * 8) |
     ((v[29] as u128) << 0xd * 8) |
     ((v[28] as u128) << 0xc * 8) |
