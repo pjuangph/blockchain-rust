@@ -87,7 +87,10 @@ pub fn check_difficulty(hash: &BlockHash, difficulty: u128) -> bool{
     difficulty > difficulty_bytes_as_u128(&hash)
 }
 
+
 mod block;
 pub use crate::block::Block;
 mod hashable;
 pub use crate::hashable::Hashable;
+mod blockchain;
+pub use crate::blockchain::Blockchain;
