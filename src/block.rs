@@ -1,5 +1,5 @@
 use std::fmt::{ self, Debug, Formatter };
-use super::{BlockHash,u128_bytes, u32_bytes, u64_bytes, Hashable, check_difficulty};
+use super::{Hash,u128_bytes, u32_bytes, u64_bytes, Hashable, check_difficulty, Transaction};
 
 /// Strategy 
 /// 1. Generate a nonce
@@ -12,10 +12,10 @@ pub struct Block {
     /// nonce - if you generate a hash and doesn't fit the difficulty so we change bytes that we are hashing but this is bad. So we introduce nonce. Nonce is arbitrary data and change it at will and eventually when hashed, that will generate a hash that matches the difficulty. 
     pub index: u32,
     pub timestamp: u128,
-    pub hash: BlockHash,
-    pub prev_block_hash: BlockHash,
+    pub hash: Hash,
+    pub prev_block_hash: Hash,
     pub nonce: u64, 
-    pub payload: String,
+    pub transactions: Vec<Transaction>,
     pub difficulty: u128,
 }
 
@@ -25,21 +25,21 @@ impl Debug for Block {
             &self.index,
             &hex::encode(&self.hash),
             &self.timestamp,
-            &self.payload,
+            &self.transactions.len(),
             &self.nonce,
         )
     }
 }
 
 impl Block {
-    pub fn new (index: u32, timestamp: u128, prev_block_hash: BlockHash, nonce: u64, payload: String, difficulty: u128) -> Self {
+    pub fn new (index: u32, timestamp: u128, prev_block_hash: Hash, transactions: Vec<Transaction>, difficulty: u128) -> Self {
         Block {
             index,
             timestamp,
             hash: vec![0; 32],
             prev_block_hash,
-            nonce,
-            payload,
+            nonce: 0,
+            transactions,
             difficulty,
         }
     }
@@ -67,7 +67,7 @@ impl Hashable for Block {
         bytes.extend(&u128_bytes(&self.timestamp));
         bytes.extend(&self.prev_block_hash);
         bytes.extend(&u64_bytes(&self.nonce));
-        bytes.extend(self.payload.as_bytes());
+        bytes.extend(self.transactions.iter().flat_map(|transaction| transaction.bytes()).collect::<Vec<u8>>());
         bytes.extend(&u128_bytes(&self.difficulty));
         bytes
     }

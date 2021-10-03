@@ -1,32 +1,34 @@
-use blockchainlib::{Block,Hashable,Blockchain,now};
+use blockchainlib::{Block,Blockchain,now, Transaction,transaction};
 
 // Note about Mining: You cannot derive the data from the hash but you can get the hash from whatever data
 
 //Difficulty - the unsigned 128 bit integer value that the most significant 16 bytes of hash must be less than before it's considered valid. Number of bits/bytes at beginning of the hash that must be 0 
 
 fn main () {
-    let difficulty = 0x0000ffffffffffffffffffffffffffff;
-    let mut block = Block::new(0, now(), vec![0; 32], 0, "Genesis block!".to_owned(), difficulty);
-    block.mine();
-    println!("Mined genesis block {:?}", &block);
-
-    let mut last_hash = block.hash.clone();
-    let mut blockchain = Blockchain {
-        blocks: vec![block],
-    };
+    let difficulty = 0x000fffffffffffffffffffffffffffff;
+    let mut genesis_block = Block::new(0, now(), vec![0; 32], vec![
+        Transaction {
+            inputs: vec![],
+            outputs: vec![
+                transaction::Output{
+                    value:50,
+                    to_addr:"Alice".to_owned()
+                },
+                transaction::Output{
+                    value:7,
+                    to_addr:"Bob".to_owned()
+                },
+            ]
+        }
+    ], difficulty);
+    genesis_block.mine();
+    println!("Mined genesis block {:?}", &genesis_block);
     
+    let mut last_hash = genesis_block.hash.clone();
+    let mut blockchain = Blockchain::new();
 
-    for i in 1..=10 { // loop 1 to 10 
-        let mut block = Block::new(i, now(), last_hash, 0, "Another block".to_owned(), difficulty);
+    blockchain.update_with_block(genesis_block).expect("failed to add genesis block");
 
-        block.mine(); 
-        println!("Mined block {:?}", &block);
-        last_hash = block.hash.clone();
-        blockchain.blocks.push(block);
-        println!("Verify: {}", &blockchain.verify());
-    }
-    blockchain.blocks[3].index = 4; 
-    println!("Verify: {}", &blockchain.verify());
 }
 
 // Block verification
@@ -34,7 +36,7 @@ fn main () {
 // 2. Block's hash fits stored difficulty value (it's insecure to simply trust the difficulty)
 // 3. Time is always increasing 
 // 4. Actual previous block's hash == stored prev_block_hash value 
-// 5. Blockchain is a distributed ledger, everyone has a history of where they got their coins
+// 5. Blockchain is a distributed ledger, everyone has a history of where they got their coins  
 
 // Block Transactions
 // Alice has 50 coins

@@ -1,4 +1,5 @@
-type BlockHash = Vec<u8>;
+type Hash = Vec<u8>;
+type Address = String; 
 
 // Credit: https://stackoverflow.com/a/44378174/2773837
 use std::time::{ SystemTime, UNIX_EPOCH };
@@ -82,7 +83,7 @@ pub fn difficulty_bytes_as_u128 (v: &Vec<u8>) -> u128 {
 }
 
 
-pub fn check_difficulty(hash: &BlockHash, difficulty: u128) -> bool{
+pub fn check_difficulty(hash: &Hash, difficulty: u128) -> bool{
     //! is the hash, 16 more signficant bytes fit the difficulty. Converting last 16 bytes to a u128 bit integer then doing the comparison
     difficulty > difficulty_bytes_as_u128(&hash)
 }
@@ -94,3 +95,5 @@ mod hashable;
 pub use crate::hashable::Hashable;
 mod blockchain;
 pub use crate::blockchain::Blockchain;
+pub mod transaction;
+pub use crate::transaction::Transaction;
